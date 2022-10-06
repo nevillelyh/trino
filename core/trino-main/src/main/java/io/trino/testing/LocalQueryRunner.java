@@ -76,7 +76,6 @@ import io.trino.metadata.AnalyzePropertyManager;
 import io.trino.metadata.BlockEncodingManager;
 import io.trino.metadata.CatalogManager;
 import io.trino.metadata.ColumnPropertyManager;
-import io.trino.metadata.DisabledSystemSecurityMetadata;
 import io.trino.metadata.ExchangeHandleResolver;
 import io.trino.metadata.FunctionBundle;
 import io.trino.metadata.FunctionManager;
@@ -97,7 +96,6 @@ import io.trino.metadata.SchemaPropertyManager;
 import io.trino.metadata.SessionPropertyManager;
 import io.trino.metadata.Split;
 import io.trino.metadata.SystemFunctionBundle;
-import io.trino.metadata.SystemSecurityMetadata;
 import io.trino.metadata.TableFunctionRegistry;
 import io.trino.metadata.TableHandle;
 import io.trino.metadata.TableProceduresPropertyManager;
@@ -370,10 +368,10 @@ public class LocalQueryRunner
         globalFunctionCatalog.addFunctions(new InternalFunctionBundle(new LiteralFunction(blockEncodingSerde)));
         globalFunctionCatalog.addFunctions(SystemFunctionBundle.create(featuresConfig, typeOperators, blockTypeOperators, nodeManager.getCurrentNode().getNodeVersion()));
         Metadata metadata = metadataProvider.getMetadata(
-                new DisabledSystemSecurityMetadata(),
                 transactionManager,
                 globalFunctionCatalog,
-                typeManager);
+                typeManager,
+                "disabled");
         typeRegistry.addType(new JsonPath2016Type(new TypeDeserializer(typeManager), blockEncodingSerde));
         this.joinCompiler = new JoinCompiler(typeOperators);
         PageIndexerFactory pageIndexerFactory = new GroupByHashPageIndexerFactory(joinCompiler, blockTypeOperators);
@@ -1143,10 +1141,10 @@ public class LocalQueryRunner
     public interface MetadataProvider
     {
         Metadata getMetadata(
-                SystemSecurityMetadata systemSecurityMetadata,
                 TransactionManager transactionManager,
                 GlobalFunctionCatalog globalFunctionCatalog,
-                TypeManager typeManager);
+                TypeManager typeManager,
+                String defaultSecurityMetadataName);
     }
 
     public static class Builder

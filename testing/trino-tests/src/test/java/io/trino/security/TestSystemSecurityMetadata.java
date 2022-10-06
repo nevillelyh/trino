@@ -15,8 +15,8 @@ package io.trino.security;
 
 import com.google.common.collect.ImmutableSet;
 import io.trino.Session;
-import io.trino.metadata.SystemSecurityMetadata;
 import io.trino.spi.security.Identity;
+import io.trino.spi.security.SystemSecurityMetadata;
 import io.trino.testing.AbstractTestQueryFramework;
 import io.trino.testing.DistributedQueryRunner;
 import io.trino.testing.QueryRunner;

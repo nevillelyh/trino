@@ -20,13 +20,12 @@ import io.trino.Session;
 import io.trino.connector.MockConnectorFactory;
 import io.trino.connector.MockConnectorPlugin;
 import io.trino.connector.MockConnectorTableHandle;
-import io.trino.metadata.DisabledSystemSecurityMetadata;
-import io.trino.metadata.QualifiedObjectName;
-import io.trino.metadata.SystemSecurityMetadata;
 import io.trino.spi.connector.CatalogSchemaTableName;
 import io.trino.spi.connector.ColumnMetadata;
 import io.trino.spi.connector.SchemaTableName;
 import io.trino.spi.security.Privilege;
+import io.trino.spi.security.SystemSecurityContext;
+import io.trino.spi.security.SystemSecurityMetadata;
 import io.trino.spi.security.TrinoPrincipal;
 import io.trino.testing.AbstractTestQueryFramework;
 import io.trino.testing.DistributedQueryRunner;
@@ -96,28 +95,28 @@ public class TestAccessControlTableRedirection
                             .toInstance(new DisabledSystemSecurityMetadata()
                             {
                                 @Override
-                                public void grantTablePrivileges(Session session, QualifiedObjectName tableName, Set<Privilege> privileges, TrinoPrincipal grantee, boolean grantOption)
+                                public void grantTablePrivileges(SystemSecurityContext context, CatalogSchemaTableName tableName, Set<Privilege> privileges, TrinoPrincipal grantee, boolean grantOption)
                                 {
                                 }
 
                                 @Override
-                                public void revokeTablePrivileges(Session session, QualifiedObjectName tableName, Set<Privilege> privileges, TrinoPrincipal grantee, boolean grantOption)
+                                public void revokeTablePrivileges(SystemSecurityContext context, CatalogSchemaTableName tableName, Set<Privilege> privileges, TrinoPrincipal grantee, boolean grantOption)
                                 {
                                 }
 
                                 @Override
-                                public boolean roleExists(Session session, String role)
+                                public boolean roleExists(SystemSecurityContext context, String role)
                                 {
                                     return true;
                                 }
 
                                 @Override
-                                public void setTableOwner(Session session, CatalogSchemaTableName table, TrinoPrincipal principal)
+                                public void setTableOwner(SystemSecurityContext context, CatalogSchemaTableName table, TrinoPrincipal principal)
                                 {
                                 }
 
                                 @Override
-                                public void denyTablePrivileges(Session session, QualifiedObjectName tableName, Set<Privilege> privileges, TrinoPrincipal grantee)
+                                public void denyTablePrivileges(SystemSecurityContext context, CatalogSchemaTableName tableName, Set<Privilege> privileges, TrinoPrincipal grantee)
                                 {
                                 }
                             });

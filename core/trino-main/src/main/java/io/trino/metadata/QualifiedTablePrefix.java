@@ -15,6 +15,7 @@ package io.trino.metadata;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.trino.spi.connector.CatalogSchemaTablePrefix;
 import io.trino.spi.connector.SchemaTablePrefix;
 
 import javax.annotation.concurrent.Immutable;
@@ -93,6 +94,11 @@ public class QualifiedTablePrefix
     public boolean hasTableName()
     {
         return tableName.isPresent();
+    }
+
+    public CatalogSchemaTablePrefix asCatalogSchemaTablePrefix()
+    {
+        return new CatalogSchemaTablePrefix(catalogName, asSchemaTablePrefix());
     }
 
     public SchemaTablePrefix asSchemaTablePrefix()

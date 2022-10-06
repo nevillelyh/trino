@@ -61,7 +61,6 @@ import io.trino.memory.MemoryManagerConfig;
 import io.trino.memory.MemoryResource;
 import io.trino.memory.NodeMemoryConfig;
 import io.trino.metadata.BlockEncodingManager;
-import io.trino.metadata.DisabledSystemSecurityMetadata;
 import io.trino.metadata.DiscoveryNodeManager;
 import io.trino.metadata.ForNodeManager;
 import io.trino.metadata.FunctionBundle;
@@ -76,7 +75,6 @@ import io.trino.metadata.Metadata;
 import io.trino.metadata.MetadataManager;
 import io.trino.metadata.ProcedureRegistry;
 import io.trino.metadata.SystemFunctionBundle;
-import io.trino.metadata.SystemSecurityMetadata;
 import io.trino.metadata.TableFunctionRegistry;
 import io.trino.metadata.TableProceduresRegistry;
 import io.trino.metadata.TypeRegistry;
@@ -349,10 +347,6 @@ public class ServerMainModule
         // metadata
         binder.bind(MetadataManager.class).in(Scopes.SINGLETON);
         binder.bind(Metadata.class).to(MetadataManager.class).in(Scopes.SINGLETON);
-        newOptionalBinder(binder, SystemSecurityMetadata.class)
-                .setDefault()
-                .to(DisabledSystemSecurityMetadata.class)
-                .in(Scopes.SINGLETON);
         binder.bind(GlobalFunctionCatalog.class).in(Scopes.SINGLETON);
         binder.bind(TypeOperatorsCache.class).in(Scopes.SINGLETON);
         newExporter(binder).export(TypeOperatorsCache.class).as(factory -> factory.generatedNameOf(TypeOperators.class));

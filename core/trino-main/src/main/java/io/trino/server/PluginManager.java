@@ -25,6 +25,7 @@ import io.trino.metadata.GlobalFunctionCatalog;
 import io.trino.metadata.HandleResolver;
 import io.trino.metadata.InternalFunctionBundle;
 import io.trino.metadata.InternalFunctionBundle.InternalFunctionBundleBuilder;
+import io.trino.metadata.MetadataManager;
 import io.trino.metadata.TypeRegistry;
 import io.trino.security.AccessControlManager;
 import io.trino.security.GroupProviderManager;
@@ -43,6 +44,7 @@ import io.trino.spi.security.GroupProviderFactory;
 import io.trino.spi.security.HeaderAuthenticatorFactory;
 import io.trino.spi.security.PasswordAuthenticatorFactory;
 import io.trino.spi.security.SystemAccessControlFactory;
+import io.trino.spi.security.SystemSecurityMetadataFactory;
 import io.trino.spi.session.SessionPropertyConfigurationManagerFactory;
 import io.trino.spi.type.ParametricType;
 import io.trino.spi.type.Type;
@@ -80,6 +82,7 @@ public class PluginManager
     private final GlobalFunctionCatalog globalFunctionCatalog;
     private final ResourceGroupManager<?> resourceGroupManager;
     private final AccessControlManager accessControlManager;
+    private final MetadataManager metadataManager;
     private final Optional<PasswordAuthenticatorManager> passwordAuthenticatorManager;
     private final CertificateAuthenticatorManager certificateAuthenticatorManager;
     private final Optional<HeaderAuthenticatorManager> headerAuthenticatorManager;
@@ -99,6 +102,7 @@ public class PluginManager
             GlobalFunctionCatalog globalFunctionCatalog,
             ResourceGroupManager<?> resourceGroupManager,
             AccessControlManager accessControlManager,
+            MetadataManager metadataManager,
             Optional<PasswordAuthenticatorManager> passwordAuthenticatorManager,
             CertificateAuthenticatorManager certificateAuthenticatorManager,
             Optional<HeaderAuthenticatorManager> headerAuthenticatorManager,
@@ -115,6 +119,7 @@ public class PluginManager
         this.globalFunctionCatalog = requireNonNull(globalFunctionCatalog, "globalFunctionCatalog is null");
         this.resourceGroupManager = requireNonNull(resourceGroupManager, "resourceGroupManager is null");
         this.accessControlManager = requireNonNull(accessControlManager, "accessControlManager is null");
+        this.metadataManager = requireNonNull(metadataManager, "metadataManager is null");
         this.passwordAuthenticatorManager = requireNonNull(passwordAuthenticatorManager, "passwordAuthenticatorManager is null");
         this.certificateAuthenticatorManager = requireNonNull(certificateAuthenticatorManager, "certificateAuthenticatorManager is null");
         this.headerAuthenticatorManager = requireNonNull(headerAuthenticatorManager, "headerAuthenticatorManager is null");
@@ -218,6 +223,11 @@ public class PluginManager
         for (SystemAccessControlFactory accessControlFactory : plugin.getSystemAccessControlFactories()) {
             log.info("Registering system access control %s", accessControlFactory.getName());
             accessControlManager.addSystemAccessControlFactory(accessControlFactory);
+        }
+
+        for (SystemSecurityMetadataFactory securityMetadataFactory : plugin.getSystemSecurityMetadataFactories()) {
+            log.info("Registering system security metadata %s", securityMetadataFactory.getName());
+            metadataManager.addSystemSecurityMetadataFactory(securityMetadataFactory);
         }
 
         passwordAuthenticatorManager.ifPresent(authenticationManager -> {

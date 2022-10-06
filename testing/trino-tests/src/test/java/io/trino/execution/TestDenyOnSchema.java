@@ -21,12 +21,13 @@ import io.trino.connector.MockConnectorFactory;
 import io.trino.connector.MockConnectorPlugin;
 import io.trino.connector.MockConnectorTableHandle;
 import io.trino.connector.MutableGrants;
-import io.trino.metadata.DisabledSystemSecurityMetadata;
-import io.trino.metadata.SystemSecurityMetadata;
+import io.trino.security.DisabledSystemSecurityMetadata;
 import io.trino.spi.connector.CatalogSchemaName;
 import io.trino.spi.connector.SchemaTableName;
 import io.trino.spi.security.Identity;
 import io.trino.spi.security.Privilege;
+import io.trino.spi.security.SystemSecurityContext;
+import io.trino.spi.security.SystemSecurityMetadata;
 import io.trino.spi.security.TrinoPrincipal;
 import io.trino.sql.query.QueryAssertions;
 import io.trino.testing.DistributedQueryRunner;
@@ -72,7 +73,7 @@ public class TestDenyOnSchema
                             .toInstance(new DisabledSystemSecurityMetadata()
                             {
                                 @Override
-                                public void denySchemaPrivileges(Session session,
+                                public void denySchemaPrivileges(SystemSecurityContext context,
                                         CatalogSchemaName schemaName,
                                         Set<Privilege> privileges,
                                         TrinoPrincipal grantee)

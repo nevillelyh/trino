@@ -21,12 +21,14 @@ import io.trino.connector.MockConnectorFactory;
 import io.trino.connector.MockConnectorPlugin;
 import io.trino.connector.MockConnectorTableHandle;
 import io.trino.connector.MutableGrants;
-import io.trino.metadata.DisabledSystemSecurityMetadata;
 import io.trino.metadata.QualifiedObjectName;
-import io.trino.metadata.SystemSecurityMetadata;
+import io.trino.security.DisabledSystemSecurityMetadata;
+import io.trino.spi.connector.CatalogSchemaTableName;
 import io.trino.spi.connector.SchemaTableName;
 import io.trino.spi.security.Identity;
 import io.trino.spi.security.Privilege;
+import io.trino.spi.security.SystemSecurityContext;
+import io.trino.spi.security.SystemSecurityMetadata;
 import io.trino.spi.security.TrinoPrincipal;
 import io.trino.sql.query.QueryAssertions;
 import io.trino.testing.DistributedQueryRunner;
@@ -72,7 +74,7 @@ public class TestDenyOnTable
                             .toInstance(new DisabledSystemSecurityMetadata()
                             {
                                 @Override
-                                public void denyTablePrivileges(Session session, QualifiedObjectName tableName, Set<Privilege> privileges, TrinoPrincipal grantee)
+                                public void denyTablePrivileges(SystemSecurityContext context, CatalogSchemaTableName tableName, Set<Privilege> privileges, TrinoPrincipal grantee)
                                 {
                                     assertThat(expectedTableName).isEqualTo(tableName);
                                     assertThat(expectedPrivileges).isEqualTo(privileges);
