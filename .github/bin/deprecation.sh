@@ -21,7 +21,7 @@ maven_deprecation() {
     echo "[INFO] Maven log: $maven_log"
 
     $MAVEN clean install \
-        -B --strict-checksums -V -T C1 -DskipTests -Dmaven.source.skip=true -Dair.check.skip-all \
+        -B --strict-checksums -V -DskipTests -Dmaven.source.skip=true -Dair.check.skip-all \
         -P deprecation \
         -pl '!:trino-docs,!:trino-server,!:trino-server-rpm' \
         -l "$maven_log"
